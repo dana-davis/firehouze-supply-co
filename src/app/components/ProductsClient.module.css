@@ -1,0 +1,28 @@
+/* ProductsClient styles */
+.emptyState {
+	text-align: center;
+	padding: 4rem 2rem;
+	background: rgba(255, 69, 0, 0.05);
+	border-radius: var(--border-radius-lg);
+	border: 2px dashed var(--primary-color);
+}
+
+.emptyStateTitle {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: var(--text-primary);
+	margin-bottom: 1rem;
+	background: var(--fire-gradient);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.emptyStateText {
+	color: var(--text-muted);
+	font-size: 1rem;
+}
+
+.productsContainer {
+	margin-top: 2rem;
+}

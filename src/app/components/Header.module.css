@@ -1,0 +1,123 @@
+.header {
+	background: var(--background-primary);
+	border-bottom: 2px solid transparent;
+	border-image: var(--fire-gradient) 1;
+	position: sticky;
+	top: 0;
+	z-index: 100;
+	backdrop-filter: blur(10px);
+	box-shadow: var(--shadow-sm);
+}
+
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: var(--space-md) var(--space-xl);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.logo {
+	text-decoration: none;
+}
+
+.logoText {
+	font-size: 1.8rem;
+	font-weight: 800;
+	background: var(--fire-gradient);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.nav {
+	display: flex;
+	gap: var(--space-xl);
+}
+
+.navLink {
+	text-decoration: none;
+	color: var(--text-primary);
+	font-weight: 500;
+	position: relative;
+	transition: color var(--transition-fast);
+}
+
+.navLink:hover {
+	color: var(--primary-color);
+}
+
+.navLink::after {
+	content: "";
+	position: absolute;
+	bottom: -4px;
+	left: 0;
+	width: 0;
+	height: 2px;
+	background: var(--fire-gradient);
+	transition: width var(--transition-normal);
+}
+
+.navLink:hover::after {
+	width: 100%;
+}
+
+.actions {
+	display: flex;
+	gap: var(--space-md);
+	align-items: center;
+}
+
+.searchBtn,
+.cartBtn {
+	background: none;
+	border: 1px solid var(--border-color);
+	padding: var(--space-sm) var(--space-md);
+	border-radius: var(--radius-md);
+	cursor: pointer;
+	transition: all var(--transition-fast);
+	font-size: 1.1rem;
+}
+
+.searchBtn:hover,
+.cartBtn:hover {
+	border-color: var(--primary-color);
+	background: var(--background-secondary);
+}
+
+.cartBtn {
+	position: relative;
+}
+
+.cartCount {
+	position: absolute;
+	top: -8px;
+	right: -8px;
+	background: var(--blaze-red);
+	color: var(--white);
+	font-size: 0.75rem;
+	width: 20px;
+	height: 20px;
+	border-radius: var(--radius-full);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 600;
+}
+
+@media (max-width: 768px) {
+	.container {
+		padding: var(--space-sm) var(--space-md);
+	}
+
+	.nav {
+		display: none;
+	}
+
+	.logoText {
+		font-size: 1.4rem;
+	}
+}

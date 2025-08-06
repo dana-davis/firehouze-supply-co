@@ -1,0 +1,124 @@
+/* Loading animations and states */
+
+.loading {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	border: 3px solid var(--background-secondary);
+	border-radius: 50%;
+	border-top-color: var(--primary-color);
+	animation: spin 1s ease-in-out infinite;
+}
+
+.loadingLarge {
+	width: 40px;
+	height: 40px;
+	border-width: 4px;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* Fire pulse animation for special elements */
+.firePulse {
+	animation: firePulse 2s ease-in-out infinite;
+}
+
+@keyframes firePulse {
+	0%,
+	100% {
+		box-shadow: 0 0 5px rgba(255, 140, 0, 0.3);
+	}
+	50% {
+		box-shadow: 0 0 20px rgba(255, 69, 0, 0.6), 0 0 30px rgba(255, 140, 0, 0.4);
+	}
+}
+
+/* Skeleton loading for product cards */
+.skeleton {
+	background: linear-gradient(
+		90deg,
+		var(--background-secondary) 25%,
+		var(--background-tertiary) 50%,
+		var(--background-secondary) 75%
+	);
+	background-size: 200% 100%;
+	animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+	0% {
+		background-position: 200% 0;
+	}
+	100% {
+		background-position: -200% 0;
+	}
+}
+
+.skeletonCard {
+	border: 1px solid var(--border-color);
+	padding: var(--space-lg);
+	border-radius: var(--radius-md);
+	background: var(--background-primary);
+}
+
+.skeletonImage {
+	aspect-ratio: 1;
+	border-radius: var(--radius-sm);
+	margin-bottom: var(--space-md);
+}
+
+.skeletonTitle {
+	height: 1.2rem;
+	border-radius: var(--radius-sm);
+	margin-bottom: var(--space-sm);
+	width: 80%;
+}
+
+.skeletonText {
+	height: 0.9rem;
+	border-radius: var(--radius-sm);
+	margin-bottom: var(--space-xs);
+}
+
+.skeletonPrice {
+	height: 1.1rem;
+	border-radius: var(--radius-sm);
+	width: 60%;
+	margin-top: var(--space-md);
+}
+
+/* Fade in animation */
+.fadeIn {
+	animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Scale in animation for cards */
+.scaleIn {
+	animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes scaleIn {
+	from {
+		opacity: 0;
+		transform: scale(0.9);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
