@@ -54,11 +54,13 @@ export default function Header({
 		if (isMobileMenuOpen) {
 			// Store current scroll position
 			const scrollY = window.scrollY;
-			
+
 			document.addEventListener("mousedown", handleOutsideClick);
 			document.addEventListener("keydown", handleEscape);
-			document.addEventListener("touchmove", handleTouchMove, { passive: false });
-			
+			document.addEventListener("touchmove", handleTouchMove, {
+				passive: false,
+			});
+
 			// Apply multiple scroll prevention methods
 			document.body.style.overflow = "hidden";
 			document.body.style.position = "fixed";
@@ -75,9 +77,9 @@ export default function Header({
 			document.body.style.width = "";
 			document.body.classList.remove(styles.noScroll);
 			document.documentElement.classList.remove("mobile-menu-open");
-			
+
 			if (scrollY) {
-				window.scrollTo(0, parseInt(scrollY || '0') * -1);
+				window.scrollTo(0, parseInt(scrollY || "0") * -1);
 			}
 		}
 
@@ -85,7 +87,7 @@ export default function Header({
 			document.removeEventListener("mousedown", handleOutsideClick);
 			document.removeEventListener("keydown", handleEscape);
 			document.removeEventListener("touchmove", handleTouchMove);
-			
+
 			// Always clean up styles
 			document.body.style.overflow = "";
 			document.body.style.position = "";
