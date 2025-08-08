@@ -161,13 +161,15 @@ export default function ProductsClient({
 			<SearchFilter
 				onSearch={handleSearch}
 				onFilter={handleFilter}
+				onSort={handleSort}
 				categories={availableCategories}
 				initialSearchTerm={searchTerm}
 				initialCategory={filters.category}
+				initialSortBy={sortBy}
 			/>
 
 			<div className={styles.productsContainer}>
-				{/* Sort Controls */}
+				{/* Desktop Sort Controls */}
 				<div className={styles.sortSection}>
 					<label htmlFor="sort-select" className={styles.sortLabel}>
 						Sort by:

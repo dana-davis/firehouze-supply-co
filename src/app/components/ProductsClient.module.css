@@ -112,14 +112,12 @@
 }
 
 @media (max-width: 768px) {
+	/* Hide desktop sort section on mobile */
 	.sortSection {
-		flex-direction: column;
-		gap: var(--space-sm);
-		text-align: center;
+		display: none;
 	}
 
-	.sortSelect {
-		min-width: auto;
-		width: 200px;
+	.productsContainer {
+		margin-top: 0;
 	}
 }
