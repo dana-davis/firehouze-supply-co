@@ -1,10 +1,10 @@
+/* SearchFilter Component Styles */
 .container {
-	background: var(--background-primary);
-	border: 1px solid var(--border-color);
-	border-radius: var(--radius-md);
-	padding: var(--space-lg);
-	margin-bottom: var(--space-xl);
-	box-shadow: var(--shadow-sm);
+	background: white;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
 .searchSection {
@@ -13,7 +13,7 @@
 
 .searchBox {
 	position: relative;
-	max-width: 400px;
+	max-width: 800px;
 }
 
 .searchInput {
@@ -51,7 +51,8 @@
 }
 
 .filterSection {
-	
+	text-align:center;
+	align-self: center;
 }
 
 .filterGroup {
@@ -83,6 +84,7 @@
 	font-size: 0.9rem;
 	font-weight: 500;
 	transition: all var(--transition-fast);
+	text-transform: uppercase;
 }
 
 .categoryBtn:hover {
@@ -104,26 +106,6 @@
 	outline: none;
 	appearance: none;
 	cursor: pointer;
-}
-
-.priceRange::-webkit-slider-thumb {
-	appearance: none;
-	width: 20px;
-	height: 20px;
-	border-radius: 50%;
-	background: var(--primary-color);
-	cursor: pointer;
-	box-shadow: var(--shadow-sm);
-}
-
-.priceRange::-moz-range-thumb {
-	width: 20px;
-	height: 20px;
-	border-radius: 50%;
-	background: var(--primary-color);
-	cursor: pointer;
-	border: none;
-	box-shadow: var(--shadow-sm);
 }
 
 @media (max-width: 768px) {

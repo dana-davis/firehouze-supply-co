@@ -11,9 +11,11 @@ export default async function Home() {
 	console.log("Fetched categories:", categories);
 
 	return (
-		<main className={styles.container}>
-			<h1 className={styles.title}>Our Products</h1>
-			<ProductsClient products={products} categories={categories} />
-		</main>
+		<div className={`${styles.pageWrapper} page-wrapper`}>
+			{/* Products Section */}
+			<main className={styles.container}>
+				<ProductsClient products={products} categories={categories} />
+			</main>
+		</div>
 	);
 }

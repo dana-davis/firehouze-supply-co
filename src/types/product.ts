@@ -20,13 +20,26 @@ export interface PortableTextBlock {
   style: string;
 }
 
-type Image = {
+export type Image = {
   _type: 'image';
   asset: {
+    _id?: string;
     _ref: string;
     _type: 'reference';
+    url?: string;
   };
+  externalURL?: string; // Optional field for external image URLs
 };
+
+export interface Logo {
+  _id: string;
+  _type: 'logo';
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title: string;
+  image: Image;
+}
 
 export interface Product {
   _id: string;
@@ -38,5 +51,12 @@ export interface Product {
   price: number;
   description: PortableTextBlock[];
   mainImage: Image | null;
+  gallery?: Image[] | null;
+  potency?: {
+    _type: 'potencyType';
+    unit: 'percent';
+    value: number;
+  };
+  strain?: string | null;
   category: string;
 }

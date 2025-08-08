@@ -3,6 +3,7 @@
 	max-width: 1200px;
 	margin: 0 auto;
 	padding: var(--space-xl);
+	margin-top: 180px;
 }
 
 .backLink {

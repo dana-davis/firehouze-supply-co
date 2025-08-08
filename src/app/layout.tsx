@@ -4,6 +4,7 @@ import "./animations.css";
 import "./buttons.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import { fetchLogo,fetchCategories } from "./lib/sanity";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -15,17 +16,20 @@ const geistMono = Geist_Mono({
 	subsets: ["latin"],
 });
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const logo = await fetchLogo();
+	const categories = await fetchCategories();
+
 	return (
 		<html lang="en">
 			<body className={`${geistSans.variable} ${geistMono.variable}`}>
-				<Header/>
+				 <Header logo={logo} categories={categories} />
 				<main>{children}</main>
-				<Footer />
+				<Footer logo={logo} />
 			</body>
 		</html>
 	);
