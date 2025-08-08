@@ -175,22 +175,22 @@
 		height: 60px; /* Even smaller when scrolled */
 	}
 
-	.container {
-		padding: var(--space-sm) var(--space-md);
-		justify-content: space-between; /* Logo left, menu button right */
+	.header.scrolled .container,
+	.header .container {
+		justify-content: space-between; 
 	}
 
 	.logo {
-		width: 120px; /* Smaller logo on mobile */
-		transform: none !important; /* No scaling on mobile */
+		width: 100px; /* Smaller logo on mobile */
+	}
+
+	.header.scrolled .logo {
+		transform: scale(0.75);
+		transform-origin: center left;
 	}
 
 	.nav {
 		display: none; /* Hide desktop nav on mobile */
-	}
-
-	.logoText {
-		font-size: 1.4rem;
 	}
 }
 
@@ -275,7 +275,7 @@
 	transform: translateY(-100%);
 	transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: center;
 	overflow: hidden; /* Prevent scrolling within overlay */
 	-webkit-overflow-scrolling: touch; /* Improve iOS scroll performance */

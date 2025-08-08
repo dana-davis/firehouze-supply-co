@@ -24,6 +24,12 @@
 	padding-top: 200px; /* Add space for fixed header */
 }
 
+@media (max-width: 768px) {
+	.pageWrapper {
+		padding-top:80px; /* Adjust for smaller header */
+	}
+}
+
 /* Product page styles */
 .container {
 	max-width: 1200px;
