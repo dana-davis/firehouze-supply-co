@@ -85,7 +85,7 @@ export const fetchMainMenu = async (): Promise<{ items: { title: string }[] }> =
   const result = await client.fetch(mainMenuQuery);
   return result || { items: [] };
 };
-console.log('fetchMainMenu query:', fetchMainMenu());
+
 export const fetchProducts = async (): Promise<Product[]> => {
   return client.fetch(productsQuery);
 };
