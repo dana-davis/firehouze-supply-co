@@ -87,13 +87,6 @@ export default function SearchFilter({
 					<div className={styles.filterGroup}>
 						<label className={styles.filterLabel}>Product Type</label>
 						<div className={styles.categoryButtons}>
-							<button
-								onClick={() => handleCategoryChange("all")}
-								className={`${styles.categoryBtn} ${
-									selectedCategory === "all" ? styles.active : ""
-								}`}>
-								All Products
-							</button>
 							{categories &&
 								categories.length > 0 &&
 								categories.map((category) => (
