@@ -1,5 +1,6 @@
 // src/app/page.tsx
 
+import { Suspense } from "react";
 import { fetchProducts, fetchCategories } from "./lib/sanity";
 import ProductsClient from "./components/ProductsClient";
 import styles from "./page.module.css";
@@ -14,7 +15,9 @@ export default async function Home() {
 		<div className={`${styles.pageWrapper} page-wrapper`}>
 			{/* Products Section */}
 			<main className={styles.container}>
-				<ProductsClient products={products} categories={categories} />
+				<Suspense fallback={<div>Loading products...</div>}>
+					<ProductsClient products={products} categories={categories} />
+				</Suspense>
 			</main>
 		</div>
 	);
