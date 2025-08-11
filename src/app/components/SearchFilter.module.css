@@ -17,9 +17,15 @@
 	gap: var(--space-lg);
 }
 
+.searchSectionWrapper {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+}
+
 /* Search Section */
 .searchSection {
-	flex: 1;
+	flex: 0 1;
 }
 
 .searchBox {
@@ -104,7 +110,7 @@
 
 .categoryButtons {
 	display: flex;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	gap: var(--space-sm);
 }
 
@@ -115,8 +121,8 @@
 		var(--background-secondary) 0%,
 		var(--background-tertiary) 100%
 	);
-	border: 2px solid var(--border-color);
-	border-radius: var(--radius-full);
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-md);
 	color: var(--text-secondary);
 	font-size: 14px;
 	font-weight: 500;
@@ -130,11 +136,6 @@
 }
 
 .categoryBtn:hover {
-	background: linear-gradient(
-		135deg,
-		var(--background-tertiary) 0%,
-		var(--ash-gray-light) 100%
-	);
 	border-color: var(--border-color-hover);
 	transform: translateY(-1px);
 	box-shadow: var(--shadow-card-hover);
@@ -146,9 +147,9 @@
 
 .categoryBtn.active {
 	background: var(--fire-gradient);
-	border-color: var(--flame-orange);
+	border-color: var(--primary-color);
 	color: var(--white);
-	box-shadow: var(--shadow-fire);
+	box-shadow: var(--shadow-fire-soft);
 	font-weight: 600;
 }
 
@@ -159,6 +160,45 @@
 		var(--blaze-red) 100%
 	);
 	border-color: var(--blaze-red);
+}
+
+/* Sort Section (Desktop) */
+.sortSection {
+	display: flex;
+	align-items: center;
+	gap: var(--space-md);
+	justify-content: flex-end;
+}
+
+.sortLabel {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--text-primary);
+	white-space: nowrap;
+	font-family: var(--font-primary);
+}
+
+.sortSelect {
+	padding: var(--space-sm) var(--space-md);
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-md);
+	background: var(--background-secondary);
+	color: var(--text-primary);
+	font-size: 14px;
+	cursor: pointer;
+	transition: var(--transition-normal);
+	font-family: var(--font-primary);
+	min-width: 180px;
+}
+
+.sortSelect:focus {
+	outline: none;
+	border-color: var(--primary-color);
+	box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
+}
+
+.sortSelect:hover {
+	border-color: var(--border-color-hover);
 }
 
 /* Mobile Filter Panel */
@@ -195,15 +235,6 @@
 
 .filterSummary::-webkit-details-marker {
 	display: none;
-}
-
-.filterSummary:hover {
-	background: linear-gradient(
-		135deg,
-		var(--background-tertiary) 0%,
-		var(--ash-gray-light) 100%
-	);
-	box-shadow: var(--shadow-sm);
 }
 
 .filterSummaryText {
@@ -253,7 +284,7 @@
 	gap: var(--space-md);
 }
 
-.sortLabel {
+.mobileSortSection .sortLabel {
 	font-size: 14px;
 	font-weight: 600;
 	color: var(--text-primary);
@@ -261,10 +292,10 @@
 	font-family: var(--font-primary);
 }
 
-.sortSelect {
+.mobileSortSection .sortSelect {
 	flex: 1;
 	padding: var(--space-sm) var(--space-md);
-	border: 2px solid var(--border-color);
+	border: 1px solid var(--border-color);
 	border-radius: var(--radius-md);
 	background: var(--background-secondary);
 	color: var(--text-primary);
@@ -274,13 +305,13 @@
 	font-family: var(--font-primary);
 }
 
-.sortSelect:focus {
+.mobileSortSection .sortSelect:focus {
 	outline: none;
 	border-color: var(--primary-color);
-	box-shadow: var(--shadow-fire-soft);
+	box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.1);
 }
 
-.sortSelect:hover {
+.mobileSortSection .sortSelect:hover {
 	border-color: var(--border-color-hover);
 }
 
@@ -295,6 +326,7 @@
 	color: var(--text-primary);
 	margin-bottom: var(--space-md);
 	font-family: var(--font-primary);
+	text-align: center;
 }
 
 .mobileFilterButtons {
@@ -311,26 +343,22 @@
 		var(--background-secondary) 0%,
 		var(--background-tertiary) 100%
 	);
-	border: 2px solid var(--border-color);
+	border: 1px solid var(--border-color);
 	border-radius: var(--radius-md);
 	color: var(--text-secondary);
-	font-size: 15px;
-	font-weight: 500;
+	font-size: 20px;
+	font-weight: 600;
 	cursor: pointer;
 	transition: var(--transition-normal);
-	text-align: left;
+	text-align: center;
 	min-height: 48px;
 	display: flex;
 	align-items: center;
+	justify-content: center;
 	font-family: var(--font-primary);
 }
 
 .mobileFilterBtn:hover {
-	background: linear-gradient(
-		135deg,
-		var(--background-tertiary) 0%,
-		var(--ash-gray-light) 100%
-	);
 	transform: translateX(4px);
 	border-color: var(--border-color-hover);
 }
@@ -341,7 +369,7 @@
 
 .mobileFilterBtn.mobileActive {
 	background: var(--fire-gradient);
-	border-color: var(--flame-orange);
+	border-color: var(--primary-color);
 	color: var(--white);
 	box-shadow: var(--shadow-fire-soft);
 	font-weight: 600;
@@ -372,9 +400,9 @@
 	}
 
 	.categoryBtn {
-		padding: 10px 16px;
+		padding: var(--space-sm) var(--space-md);
 		font-size: 13px;
-		border-radius: var(--radius-lg);
+		border-radius: var(--radius-md);
 	}
 
 	.filterLabel {
@@ -441,7 +469,6 @@
 
 	.mobileFilterBtn {
 		padding: var(--space-md) 16px;
-		font-size: 14px;
 		min-height: 44px;
 	}
 }

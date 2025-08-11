@@ -50,67 +50,71 @@ export default function SearchFilter({
 		onSort?.(newSortBy);
 	};
 
-	// Get selected category display name
-	const getSelectedCategoryName = () => {
-		if (selectedCategory === "all") return "All Products";
-		const category = categories?.find((cat) => cat.slug === selectedCategory);
-		return category
-			? category.title.charAt(0).toUpperCase() + category.title.slice(1)
-			: "All Products";
-	};
-
 	return (
 		<div className={styles.container}>
 			{/* Desktop Search and Filter Section */}
 			<div className={styles.desktopSection}>
-				<div className={styles.searchSection}>
-					<div className={styles.searchBox}>
-						<input
-							type="text"
-							placeholder="Search products..."
-							value={searchTerm}
-							onChange={handleSearch}
-							className={styles.searchInput}
-							autoComplete="off"
-							autoCapitalize="words"
-						/>
-						<button
-							className={styles.searchBtn}
-							aria-label="Search"
-							type="button">
-							🔍
-						</button>
+				<div className={styles.searchSectionWrapper}>
+					<div className={styles.filterSection}>
+						<div className={styles.filterGroup}>
+							<label className={styles.filterLabel}>Product Type</label>
+							<div className={styles.categoryButtons}>
+								{categories &&
+									categories.length > 0 &&
+									categories.map((category) => (
+										<button
+											key={category.slug}
+											onClick={() => handleCategoryChange(category.slug)}
+											className={`${styles.categoryBtn} ${
+												selectedCategory === category.slug ? styles.active : ""
+											}`}>
+											{category.title.charAt(0).toUpperCase() +
+												category.title.slice(1)}
+										</button>
+									))}
+							</div>
+						</div>
+					</div>
+										<div className={styles.searchSection}>
+						<div className={styles.searchBox}>
+							<input
+								type="text"
+								placeholder="Search products..."
+								value={searchTerm}
+								onChange={handleSearch}
+								className={styles.searchInput}
+								autoComplete="off"
+								autoCapitalize="words"
+							/>
+							<button
+								className={styles.searchBtn}
+								aria-label="Search"
+								type="button">
+								🔍
+							</button>
+						</div>
 					</div>
 				</div>
 
-				<div className={styles.filterSection}>
-					<div className={styles.filterGroup}>
-						<label className={styles.filterLabel}>Product Type</label>
-						<div className={styles.categoryButtons}>
-							{categories &&
-								categories.length > 0 &&
-								categories.map((category) => (
-									<button
-										key={category.slug}
-										onClick={() => handleCategoryChange(category.slug)}
-										className={`${styles.categoryBtn} ${
-											selectedCategory === category.slug ? styles.active : ""
-										}`}>
-										{category.title.charAt(0).toUpperCase() +
-											category.title.slice(1)}
-									</button>
-								))}
-						</div>
-					</div>
+				{/* Desktop Sort Section */}
+				<div className={styles.sortSection}>
+					<label className={styles.sortLabel}>Sort by:</label>
+					<select
+						value={sortBy}
+						onChange={(e) => handleSort(e.target.value)}
+						className={styles.sortSelect}>
+						<option value="name-asc">Name (A-Z)</option>
+						<option value="name-desc">Name (Z-A)</option>
+						<option value="price-asc">Price (Low to High)</option>
+						<option value="price-desc">Price (High to Low)</option>
+					</select>
 				</div>
 			</div>
 
 			{/* Mobile Collapsible Panel */}
 			<details className={styles.mobileFilterPanel}>
 				<summary className={styles.filterSummary}>
-					<span className={styles.filterSummaryText}>
-						Search & Filter
-					</span>
+					<span className={styles.filterSummaryText}>Search & Filter</span>
 					<span className={styles.filterSummaryIcon}>▼</span>
 				</summary>
 				<div className={styles.filterContent}>

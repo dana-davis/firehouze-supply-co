@@ -109,3 +109,13 @@ export const fetchCategories = async (): Promise<{ title: string; slug: string }
     slug: category.toLowerCase().replace(/\-/g, '')
   }));
 };
+
+export const fetchProductsByAPI = async (): Promise<Product[]> => {
+  const response = await fetch('https://z9uq243g.api.sanity.io/v2025-08-11/data/query/development?query=*%5B_type+%3D%3D+%27product%27%5D&perspective=drafts');
+  if (!response.ok) {
+    throw new Error('Failed to fetch products');
+  }
+  const data = await response.json();
+  console.log('fetchProductsByAPI products:', data);
+  return data.result;
+};

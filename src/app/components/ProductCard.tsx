@@ -18,7 +18,6 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
 	const description = extractTextFromPortableText(product.description);
-	console.log("Rendering ProductCard for product:", product);
 	return (
 		<div className={styles.card}>
 			<Link href={`/products/${product.slug.current}`}>

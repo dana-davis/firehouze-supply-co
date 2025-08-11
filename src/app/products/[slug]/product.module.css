@@ -74,14 +74,10 @@
 .category {
 	font-size: 0.875rem;
 	font-weight: 500;
-	color: var(--primary-color);
+	color: var(--accent-color);
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 	margin-bottom: var(--space-md);
-	background: var(--fire-gradient);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	background-clip: text;
 }
 
 .productTitle {
@@ -109,11 +105,8 @@
 .price {
 	font-size: 1.5rem;
 	font-weight: 700;
-	background: var(--fire-gradient);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	background-clip: text;
 	margin-bottom: var(--space-xl);
+	color: var(--accent-color);
 }
 
 @media (max-width: 768px) {

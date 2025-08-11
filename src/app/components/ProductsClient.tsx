@@ -7,6 +7,8 @@ import ProductGrid from "./ProductGrid";
 import SearchFilter from "./SearchFilter";
 import styles from "./ProductsClient.module.css";
 
+const PRODUCTS_PER_PAGE = 12; // Number of products to show initially and load per "Load More" click
+
 interface ProductsClientProps {
 	products: Product[];
 	categories?: { title: string; slug: string }[];
@@ -33,6 +35,9 @@ export default function ProductsClient({
 		searchParams.get("sort") || "name-asc"
 	);
 
+	// Pagination state
+	const [displayCount, setDisplayCount] = useState<number>(PRODUCTS_PER_PAGE);
+
 	// Watch for URL parameter changes and update state accordingly
 	useEffect(() => {
 		const newSearchTerm = searchParams.get("search") || "";
@@ -44,6 +49,8 @@ export default function ProductsClient({
 			category: newCategory,
 		});
 		setSortBy(newSortBy);
+		// Reset display count when filters change
+		setDisplayCount(PRODUCTS_PER_PAGE);
 	}, [searchParams]);
 
 	// Update URL when filters change
@@ -92,7 +99,7 @@ export default function ProductsClient({
 	}, [categories, products]);
 
 	// Filter and search products based on current state
-	const filteredProducts = useMemo(() => {
+	const allFilteredProducts = useMemo(() => {
 		let filtered = [...products];
 
 		// Filter by search term
@@ -131,19 +138,31 @@ export default function ProductsClient({
 		return filtered;
 	}, [products, searchTerm, filters, sortBy]);
 
+	// Get the products to display based on current display count
+	const displayedProducts = useMemo(() => {
+		return allFilteredProducts.slice(0, displayCount);
+	}, [allFilteredProducts, displayCount]);
+
 	const handleSearch = (term: string) => {
 		setSearchTerm(term);
+		setDisplayCount(PRODUCTS_PER_PAGE); // Reset pagination when searching
 		updateURL(term, filters, sortBy);
 	};
 
 	const handleFilter = (newFilters: { category: string }) => {
 		setFilters(newFilters);
+		setDisplayCount(PRODUCTS_PER_PAGE); // Reset pagination when filtering
 		updateURL(searchTerm, newFilters, sortBy);
 	};
 
 	const handleSort = (newSortBy: string) => {
 		setSortBy(newSortBy);
+		setDisplayCount(PRODUCTS_PER_PAGE); // Reset pagination when sorting
 		updateURL(searchTerm, filters, newSortBy);
+	};
+
+	const handleLoadMore = () => {
+		setDisplayCount((prev) => prev + PRODUCTS_PER_PAGE);
 	};
 
 	// Function to clear all filters
@@ -153,8 +172,12 @@ export default function ProductsClient({
 		setFilters(defaultFilters);
 		setSearchTerm("");
 		setSortBy(defaultSort);
+		setDisplayCount(PRODUCTS_PER_PAGE); // Reset pagination when clearing filters
 		updateURL("", defaultFilters, defaultSort);
 	};
+
+	// Check if there are more products to load
+	const hasMoreProducts = displayCount < allFilteredProducts.length;
 
 	return (
 		<>
@@ -169,23 +192,7 @@ export default function ProductsClient({
 			/>
 
 			<div className={styles.productsContainer}>
-				{/* Desktop Sort Controls */}
-				<div className={styles.sortSection}>
-					<label htmlFor="sort-select" className={styles.sortLabel}>
-						Sort by:
-					</label>
-					<select
-						id="sort-select"
-						value={sortBy}
-						onChange={(e) => handleSort(e.target.value)}
-						className={styles.sortSelect}>
-						<option value="name-asc">Name (A-Z)</option>
-						<option value="name-desc">Name (Z-A)</option>
-						<option value="price-asc">Price (Low to High)</option>
-						<option value="price-desc">Price (High to Low)</option>
-					</select>
-				</div>
-				{filteredProducts.length === 0 ? (
+				{allFilteredProducts.length === 0 ? (
 					<div className={styles.emptyState}>
 						<h3 className={styles.emptyStateTitle}>No products found</h3>
 						<p className={styles.emptyStateText}>
@@ -193,7 +200,19 @@ export default function ProductsClient({
 						</p>
 					</div>
 				) : (
-					<ProductGrid products={filteredProducts} />
+					<>
+						<ProductGrid products={displayedProducts} />
+						{hasMoreProducts && (
+							<div className={styles.loadMoreContainer}>
+								<button
+									className={styles.loadMoreButton}
+									onClick={handleLoadMore}>
+									Load More Products (
+									{allFilteredProducts.length - displayCount} remaining)
+								</button>
+							</div>
+						)}
+					</>
 				)}
 			</div>
 		</>
