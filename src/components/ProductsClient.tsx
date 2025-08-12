@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useMemo, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Product } from "@/types";
@@ -34,6 +32,8 @@ export default function ProductsClient({
 	const [sortBy, setSortBy] = useState<string>(
 		searchParams.get("sort") || "name-asc"
 	);
+
+	const [currentView, setCurrentView] = useState<"grid" | "list">("grid");
 
 	// Pagination state
 	const [displayCount, setDisplayCount] = useState<number>(PRODUCTS_PER_PAGE);
@@ -161,19 +161,12 @@ export default function ProductsClient({
 		updateURL(searchTerm, filters, newSortBy);
 	};
 
-	const handleLoadMore = () => {
-		setDisplayCount((prev) => prev + PRODUCTS_PER_PAGE);
+	const handleViewChange = (view: "grid" | "list") => {
+		setCurrentView(view);
 	};
 
-	// Function to clear all filters
-	const clearFilters = () => {
-		const defaultFilters = { category: "all" };
-		const defaultSort = "name-asc";
-		setFilters(defaultFilters);
-		setSearchTerm("");
-		setSortBy(defaultSort);
-		setDisplayCount(PRODUCTS_PER_PAGE); // Reset pagination when clearing filters
-		updateURL("", defaultFilters, defaultSort);
+	const handleLoadMore = () => {
+		setDisplayCount((prev) => prev + PRODUCTS_PER_PAGE);
 	};
 
 	// Check if there are more products to load
@@ -185,10 +178,12 @@ export default function ProductsClient({
 				onSearch={handleSearch}
 				onFilter={handleFilter}
 				onSort={handleSort}
+				onViewChange={handleViewChange}
 				categories={availableCategories}
 				initialSearchTerm={searchTerm}
 				initialCategory={filters.category}
 				initialSortBy={sortBy}
+				currentView={currentView}
 			/>
 
 			<div className={styles.productsContainer}>
@@ -201,7 +196,7 @@ export default function ProductsClient({
 					</div>
 				) : (
 					<>
-						<ProductGrid products={displayedProducts} />
+						<ProductGrid products={displayedProducts} viewType={currentView} />
 						{hasMoreProducts && (
 							<div className={styles.loadMoreContainer}>
 								<button

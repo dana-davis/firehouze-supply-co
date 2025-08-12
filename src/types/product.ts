@@ -59,4 +59,8 @@ export interface Product {
   };
   strain?: string | null;
   category: string;
+  size: {
+    value: number;
+    unit: 'grams' | 'count';
+  };
 }

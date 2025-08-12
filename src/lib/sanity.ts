@@ -74,7 +74,8 @@ export const productQuery = `
     category,
     potency,
     strain,
-    gallery
+    gallery,
+    size
   }
 `
 export const mainMenuQuery = `

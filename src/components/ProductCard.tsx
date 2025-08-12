@@ -14,20 +14,36 @@ function extractTextFromPortableText(blocks: PortableTextBlock[]): string {
 
 interface ProductCardProps {
 	product: Product;
+	viewType?: "grid" | "list";
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({
+	product,
+	viewType = "grid",
+}: ProductCardProps) {
 	const description = extractTextFromPortableText(product.description);
 	return (
-		<div className={styles.card}>
+		<div
+			className={`${styles.card} ${
+				viewType === "list" ? styles.listCard : ""
+			}`}>
 			<Link href={`/products/${product.slug.current}`}>
 				<div className={styles.imageContainer}>
 					{product.mainImage ? (
 						<Image
-							src={product.mainImage.externalURL || urlFor(product.mainImage).url() || ""}
+							src={
+								product.mainImage.externalURL ||
+								urlFor(product.mainImage).url() ||
+								""
+							}
 							alt={product.title || "Product image"}
 							className={styles.image}
 							fill
+							sizes={
+								viewType === "list"
+									? "(max-width: 768px) 30vw, 20vw"
+									: "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+							}
 							loading="lazy"
 						/>
 					) : (
@@ -39,6 +55,9 @@ export default function ProductCard({ product }: ProductCardProps) {
 
 				<div className={styles.content}>
 					<h3 className={styles.title}>{product.title || "Unnamed Product"}</h3>
+					{viewType === "list" && description && (
+						<p className={styles.description}>{description}</p>
+					)}
 					<div className={styles.footer}>
 						<span className={styles.price}>${product.price}</span>
 						{product.category && (

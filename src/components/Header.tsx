@@ -1,4 +1,3 @@
-"use client";
 import { useState, useEffect } from "react";
 import { urlFor } from "../lib/sanity";
 
@@ -119,7 +118,7 @@ export default function Header({
 					<Link href="/" className={styles.navLink}>
 						All Products
 					</Link>
-					{categories.map((category) => (
+					{categories?.map((category) => (
 						<Link
 							key={category.slug}
 							href={`/?category=${category.slug}`}
@@ -157,7 +156,7 @@ export default function Header({
 						onClick={() => setIsMobileMenuOpen(false)}>
 						All Products
 					</Link>
-					{categories.map((category) => (
+					{categories?.map((category) => (
 						<Link
 							key={category.slug}
 							href={`/?category=${category.slug}`}

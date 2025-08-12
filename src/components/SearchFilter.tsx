@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import styles from "./SearchFilter.module.css";
 
@@ -7,20 +5,24 @@ interface SearchFilterProps {
 	onSearch?: (searchTerm: string) => void;
 	onFilter?: (filters: { category: string }) => void;
 	onSort?: (sortBy: string) => void;
+	onViewChange?: (view: "grid" | "list") => void;
 	categories?: { title: string; slug: string }[];
 	initialSearchTerm?: string;
 	initialCategory?: string;
 	initialSortBy?: string;
+	currentView?: "grid" | "list";
 }
 
 export default function SearchFilter({
 	onSearch,
 	onFilter,
 	onSort,
+	onViewChange,
 	categories,
 	initialSearchTerm = "",
 	initialCategory = "all",
 	initialSortBy = "name-asc",
+	currentView = "grid",
 }: SearchFilterProps) {
 	const [searchTerm, setSearchTerm] = useState<string>(initialSearchTerm);
 	const [selectedCategory, setSelectedCategory] =
@@ -75,7 +77,7 @@ export default function SearchFilter({
 							</div>
 						</div>
 					</div>
-										<div className={styles.searchSection}>
+					<div className={styles.searchSection}>
 						<div className={styles.searchBox}>
 							<input
 								type="text"
@@ -176,6 +178,30 @@ export default function SearchFilter({
 					</div>
 				</div>
 			</details>
+			{/* Mobile View Toggle */}
+			<div className={styles.mobileViewToggle}>
+				<label className={styles.viewToggleLabel}>View:</label>
+				<div className={styles.viewToggleButtons}>
+					<button
+						onClick={() => onViewChange?.("grid")}
+						className={`${styles.viewToggleBtn} ${
+							currentView === "grid" ? styles.viewToggleActive : ""
+						}`}
+						aria-label="Grid view">
+						<span className={styles.viewToggleIcon}>⊞</span>
+						Grid
+					</button>
+					<button
+						onClick={() => onViewChange?.("list")}
+						className={`${styles.viewToggleBtn} ${
+							currentView === "list" ? styles.viewToggleActive : ""
+						}`}
+						aria-label="List view">
+						<span className={styles.viewToggleIcon}>☰</span>
+						List
+					</button>
+				</div>
+			</div>
 		</div>
 	);
 }
