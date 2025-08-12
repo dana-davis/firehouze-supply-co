@@ -2,6 +2,7 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import {
 	fetchProduct,
 	fetchProducts,
@@ -9,7 +10,12 @@ import {
 	fetchLogo,
 	fetchCategories,
 } from "../../lib/sanity";
-import { Product, PortableTextBlock, Logo } from "../../types";
+import {
+	Product,
+	PortableTextBlock,
+	Logo,
+	Image as ImageType,
+} from "../../types";
 import styles from "../../styles/product.module.css";
 
 interface ProductPageProps {
@@ -53,6 +59,10 @@ function renderPortableText(blocks: PortableTextBlock[]) {
 }
 
 export default function ProductPage({ product }: ProductPageProps) {
+	const [selectedImage, setSelectedImage] = useState<ImageType | null>(
+		product?.mainImage || null
+	);
+
 	if (!product) {
 		return (
 			<div className={styles.container}>
@@ -61,6 +71,10 @@ export default function ProductPage({ product }: ProductPageProps) {
 			</div>
 		);
 	}
+
+	const handleImageClick = (image: ImageType) => {
+		setSelectedImage(image);
+	};
 
 	return (
 		<>
@@ -80,12 +94,10 @@ export default function ProductPage({ product }: ProductPageProps) {
 
 				<div className={styles.productLayout}>
 					<div className={styles.imageSection}>
-						{product.mainImage && product.mainImage.externalURL ? (
+						{selectedImage && selectedImage.externalURL !== "" ? (
 							<Image
 								src={
-									product.mainImage.externalURL ||
-									urlFor(product.mainImage).url() ||
-									""
+									selectedImage.externalURL || urlFor(selectedImage).url() || ""
 								}
 								alt={product.title || "Product image"}
 								className={styles.productImage}
@@ -96,6 +108,55 @@ export default function ProductPage({ product }: ProductPageProps) {
 						) : (
 							<div className={styles.noImage}>
 								<span>No image available</span>
+							</div>
+						)}
+
+						{/* Gallery Images */}
+						{product.gallery && product.gallery.length > 0 && (
+							<div className={styles.gallery}>
+								<h4 className={styles.galleryTitle}>More Images</h4>
+								<div className={styles.galleryGrid}>
+									{/* Add main image to gallery if it exists */}
+									{product.mainImage && (
+										<div
+											className={`${styles.galleryImageContainer} ${
+												selectedImage === product.mainImage
+													? styles.galleryImageActive
+													: ""
+											}`}
+											onClick={() => handleImageClick(product.mainImage!)}>
+											<Image
+												src={
+													product.mainImage.externalURL ||
+													urlFor(product.mainImage).url() ||
+													""
+												}
+												alt={`${product.title} - Main Image`}
+												className={styles.galleryImage}
+												width={100}
+												height={100}
+												loading="lazy"
+											/>
+										</div>
+									)}
+									{product.gallery.map((image, index) => (
+										<div
+											key={index}
+											className={`${styles.galleryImageContainer} ${
+												selectedImage === image ? styles.galleryImageActive : ""
+											}`}
+											onClick={() => handleImageClick(image)}>
+											<Image
+												src={image.externalURL || urlFor(image).url() || ""}
+												alt={`${product.title} - Image ${index + 2}`}
+												className={styles.galleryImage}
+												width={100}
+												height={100}
+												loading="lazy"
+											/>
+										</div>
+									))}
+								</div>
 							</div>
 						)}
 					</div>
@@ -111,11 +172,16 @@ export default function ProductPage({ product }: ProductPageProps) {
 
 						{product.size && (
 							<div className={styles.sizeWrapper}>
-								Size: <div className={styles.size}>{product.size.value} {product.size.unit}</div>
+								Size:{" "}
+								<div className={styles.size}>
+									{product.size.value} {product.size.unit}
+								</div>
 							</div>
 						)}
 
-						<div className={styles.price}><span>Price:</span>${product.price}</div>
+						<div className={styles.price}>
+							<span>Price:</span>${product.price}
+						</div>
 
 						{product.potency && (
 							<div className={styles.potency}>
@@ -125,11 +191,13 @@ export default function ProductPage({ product }: ProductPageProps) {
 						)}
 
 						{product.strain && (
-							<div className={styles.strain}><span>Strain:</span> {product.strain}</div>
+							<div className={styles.strain}>
+								<span>Strain:</span> {product.strain}
+							</div>
 						)}
 
 						<div className={styles.description}>
-              <h3>Description</h3>
+							<h3>Description</h3>
 							{renderPortableText(product.description)}
 						</div>
 					</div>
