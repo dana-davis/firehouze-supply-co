@@ -9,7 +9,7 @@ const PRODUCTS_PER_PAGE = 12; // Number of products to show initially and load p
 
 interface ProductsClientProps {
 	products: Product[];
-	categories?: { title: string; slug: string }[];
+	categories?: { title: string; slug: string; subcategories: string[] }[];
 }
 
 export default function ProductsClient({
@@ -25,8 +25,10 @@ export default function ProductsClient({
 	);
 	const [filters, setFilters] = useState<{
 		category: string;
+		subcategory?: string;
 	}>({
 		category: searchParams.get("category") || "all",
+		subcategory: searchParams.get("subcategory") || "",
 	});
 
 	const [sortBy, setSortBy] = useState<string>(
@@ -42,11 +44,13 @@ export default function ProductsClient({
 	useEffect(() => {
 		const newSearchTerm = searchParams.get("search") || "";
 		const newCategory = searchParams.get("category") || "all";
+		const newSubcategory = searchParams.get("subcategory") || "";
 		const newSortBy = searchParams.get("sort") || "name-asc";
 
 		setSearchTerm(newSearchTerm);
 		setFilters({
 			category: newCategory,
+			subcategory: newSubcategory,
 		});
 		setSortBy(newSortBy);
 		// Reset display count when filters change
@@ -56,7 +60,7 @@ export default function ProductsClient({
 	// Update URL when filters change
 	const updateURL = (
 		newSearchTerm: string,
-		newFilters: { category: string },
+		newFilters: { category: string; subcategory?: string },
 		newSortBy?: string
 	) => {
 		const params = new URLSearchParams();
@@ -67,6 +71,10 @@ export default function ProductsClient({
 
 		if (newFilters.category && newFilters.category !== "all") {
 			params.set("category", newFilters.category);
+		}
+
+		if (newFilters.subcategory) {
+			params.set("subcategory", newFilters.subcategory);
 		}
 
 		if (newSortBy && newSortBy !== "name-asc") {
@@ -82,7 +90,7 @@ export default function ProductsClient({
 	// Get categories from props or extract from products
 	const availableCategories = useMemo(() => {
 		if (categories && categories.length > 0) {
-			return [{ title: "All", slug: "all" }, ...categories];
+			return [{ title: "All", slug: "all", subcategories: [] }, ...categories];
 		}
 
 		// Extract unique categories from products
@@ -93,9 +101,10 @@ export default function ProductsClient({
 			.map((category) => ({
 				title: category,
 				slug: category.toLowerCase(),
+				subcategories: [],
 			}));
 
-		return [{ title: "All", slug: "all" }, ...uniqueCategories];
+		return [{ title: "All", slug: "all", subcategories: [] }, ...uniqueCategories];
 	}, [categories, products]);
 
 	// Filter and search products based on current state
@@ -118,6 +127,15 @@ export default function ProductsClient({
 					product.category.toLowerCase() === filters.category.toLowerCase()
 			);
 		}
+
+		// Filter by subcategory
+		if (filters.subcategory && filters.subcategory.trim()) {
+			filtered = filtered.filter(
+				(product) =>
+					product.flowerType?.toLowerCase() === filters.subcategory?.toLowerCase()
+			);
+		}
+
 
 		// Sort products
 		filtered.sort((a, b) => {
@@ -149,7 +167,7 @@ export default function ProductsClient({
 		updateURL(term, filters, sortBy);
 	};
 
-	const handleFilter = (newFilters: { category: string }) => {
+	const handleFilter = (newFilters: { category: string; subcategory?: string }) => {
 		setFilters(newFilters);
 		setDisplayCount(PRODUCTS_PER_PAGE); // Reset pagination when filtering
 		updateURL(searchTerm, newFilters, sortBy);
@@ -182,6 +200,7 @@ export default function ProductsClient({
 				categories={availableCategories}
 				initialSearchTerm={searchTerm}
 				initialCategory={filters.category}
+				initialSubcategory={filters.subcategory}
 				initialSortBy={sortBy}
 				currentView={currentView}
 			/>

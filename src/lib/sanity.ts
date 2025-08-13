@@ -59,7 +59,8 @@ export const productsQuery = `
     category,
     potency,
     strain,
-    gallery
+    gallery,
+    flowerType
   }
 `
 
@@ -75,7 +76,8 @@ export const productQuery = `
     potency,
     strain,
     gallery,
-    size
+    size,
+    flowerType
   }
 `
 export const mainMenuQuery = `
@@ -88,7 +90,12 @@ export const fetchMainMenu = async (): Promise<{ items: { title: string }[] }> =
 };
 
 export const fetchProducts = async (): Promise<Product[]> => {
-  return client.fetch(productsQuery);
+  let products = await client.fetch(productsQuery);
+  products = products.map((product: Product) => ({
+    ...product,
+    subcategory: product.flowerType
+  }));
+  return products;
 };
 
 export const fetchProduct = async (slug: string): Promise<Product> => {
@@ -104,11 +111,15 @@ export const categoriesQuery = `
 
 export const fetchCategories = async (): Promise<{ title: string; slug: string }[]> => {
   const result = await client.fetch(categoriesQuery);
-  console.log('Fetched categories:', result);
-  return result[0].category_title.map((category:string) => ({
-    title: category,
-    slug: category.toLowerCase().replace(/\-/g, '')
-  }));
+  console.log('Fetched categories:', result[0].category_title);
+  return result[0].category_title.map(({title, subcategories}: {title: string; subcategories?: string[]}) => {
+    console.log('Mapping category:', title);
+    return {
+      title,
+      subcategories: subcategories || [],
+      slug: title.toLowerCase().replace(/\-/g, '')
+    };
+  });
 };
 
 export const fetchProductsByAPI = async (): Promise<Product[]> => {

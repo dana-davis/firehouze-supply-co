@@ -1,105 +1,221 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { urlFor } from "../lib/sanity";
-
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./Header.module.css";
 import { Logo } from "@/types";
 
-export default function Header({
-	logo,
-	categories,
-}: {
+interface HeaderProps {
 	logo: Logo;
-	categories: { title: string; slug: string }[];
-}) {
+	categories: { title: string; slug: string; subcategories: string[] }[];
+}
+
+export default function Header({ logo, categories }: HeaderProps) {
 	const [isScrolled, setIsScrolled] = useState(false);
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-	console.log("Header component rendered with logo:", logo);
+	const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
+		new Set()
+	);
+	const scrollPositionRef = useRef(0);
 
+	// Optimized scroll handler with throttling
 	useEffect(() => {
+		let ticking = false;
+
 		const handleScroll = () => {
-			const scrollTop = window.scrollY;
-			// Reduce threshold for earlier transition
-			setIsScrolled(scrollTop > 80);
+			if (!ticking) {
+				requestAnimationFrame(() => {
+					setIsScrolled(window.scrollY > 80);
+					ticking = false;
+				});
+				ticking = true;
+			}
 		};
 
 		window.addEventListener("scroll", handleScroll, { passive: true });
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
 
-	// Close mobile menu when clicking outside or on escape
-	useEffect(() => {
-		const handleOutsideClick = (event: MouseEvent) => {
-			const target = event.target as Element;
-			if (isMobileMenuOpen && !target.closest(`.${styles.header}`)) {
-				setIsMobileMenuOpen(false);
-			}
-		};
-
-		const handleEscape = (event: KeyboardEvent) => {
-			if (event.key === "Escape" && isMobileMenuOpen) {
-				setIsMobileMenuOpen(false);
-			}
-		};
-
-		// Prevent touchmove events to stop scrolling
-		const handleTouchMove = (event: TouchEvent) => {
-			if (isMobileMenuOpen) {
-				event.preventDefault();
-			}
-		};
-
-		if (isMobileMenuOpen) {
-			// Store current scroll position
-			const scrollY = window.scrollY;
-
-			document.addEventListener("mousedown", handleOutsideClick);
-			document.addEventListener("keydown", handleEscape);
-			document.addEventListener("touchmove", handleTouchMove, {
-				passive: false,
-			});
-
-			// Apply multiple scroll prevention methods
-			document.body.style.overflow = "hidden";
-			document.body.style.position = "fixed";
-			document.body.style.top = `-${scrollY}px`;
-			document.body.style.width = "100%";
+	// Body scroll management
+	const toggleBodyScroll = useCallback((disable: boolean) => {
+		if (disable) {
+			scrollPositionRef.current = window.scrollY;
+			document.body.style.cssText = `
+				overflow: hidden;
+				position: fixed;
+				top: -${scrollPositionRef.current}px;
+				width: 100%;
+			`;
 			document.body.classList.add(styles.noScroll);
 			document.documentElement.classList.add("mobile-menu-open");
 		} else {
-			// Restore scroll position when closing menu
-			const scrollY = document.body.style.top;
-			document.body.style.overflow = "";
-			document.body.style.position = "";
-			document.body.style.top = "";
-			document.body.style.width = "";
+			document.body.style.cssText = "";
 			document.body.classList.remove(styles.noScroll);
 			document.documentElement.classList.remove("mobile-menu-open");
-
-			if (scrollY) {
-				window.scrollTo(0, parseInt(scrollY || "0") * -1);
-			}
+			window.scrollTo(0, scrollPositionRef.current);
 		}
+	}, []);
+
+	// Mobile menu handlers
+	const closeMobileMenu = useCallback(() => {
+		setIsMobileMenuOpen(false);
+		setExpandedCategories(new Set()); // Reset expanded categories when closing menu
+	}, []);
+
+	const toggleMobileMenu = useCallback(() => {
+		setIsMobileMenuOpen((prev) => !prev);
+	}, []);
+
+	// Handle category expansion for mobile
+	const toggleCategoryExpansion = useCallback((categorySlug: string) => {
+		setExpandedCategories((prev) => {
+			const newSet = new Set(prev);
+			if (newSet.has(categorySlug)) {
+				newSet.delete(categorySlug);
+			} else {
+				newSet.add(categorySlug);
+			}
+			return newSet;
+		});
+	}, []);
+
+	// Event listeners for mobile menu
+	useEffect(() => {
+		if (!isMobileMenuOpen) return;
+
+		const handleClickOutside = (event: MouseEvent) => {
+			const target = event.target as Element;
+			if (!target.closest(`.${styles.header}`)) {
+				closeMobileMenu();
+			}
+		};
+
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "Escape") {
+				closeMobileMenu();
+			}
+		};
+
+		const handleTouchMove = (event: TouchEvent) => {
+			event.preventDefault();
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		document.addEventListener("keydown", handleKeyDown);
+		document.addEventListener("touchmove", handleTouchMove, { passive: false });
 
 		return () => {
-			document.removeEventListener("mousedown", handleOutsideClick);
-			document.removeEventListener("keydown", handleEscape);
+			document.removeEventListener("mousedown", handleClickOutside);
+			document.removeEventListener("keydown", handleKeyDown);
 			document.removeEventListener("touchmove", handleTouchMove);
-
-			// Always clean up styles
-			document.body.style.overflow = "";
-			document.body.style.position = "";
-			document.body.style.top = "";
-			document.body.style.width = "";
-			document.body.classList.remove(styles.noScroll);
-			document.documentElement.classList.remove("mobile-menu-open");
 		};
-	}, [isMobileMenuOpen]);
+	}, [isMobileMenuOpen, closeMobileMenu]);
 
-	const toggleMobileMenu = () => {
-		setIsMobileMenuOpen(!isMobileMenuOpen);
-	};
+	// Handle body scroll when mobile menu opens/closes
+	useEffect(() => {
+		toggleBodyScroll(isMobileMenuOpen);
+		return () => toggleBodyScroll(false); // Cleanup on unmount
+	}, [isMobileMenuOpen, toggleBodyScroll]);
+
+	// Navigation items component for reusability
+	const NavigationItems = ({ isMobile = false }: { isMobile?: boolean }) => (
+		<>
+			<Link
+				href="/"
+				className={isMobile ? styles.mobileNavLink : styles.navLink}
+				onClick={isMobile ? closeMobileMenu : undefined}>
+				All Products
+			</Link>
+			{categories?.map((category) => {
+				const hasSubcategories =
+					category.subcategories && category.subcategories.length > 0;
+				const isExpanded = expandedCategories.has(category.slug);
+
+				// Shared subcategory links component
+				const SubcategoryLinks = () => (
+					<>
+						<Link
+							href={`/?category=${category.slug}`}
+							className={
+								isMobile ? styles.mobileSubNavLink : styles.dropdownLink
+							}
+							onClick={isMobile ? closeMobileMenu : undefined}>
+							All {category.title}
+						</Link>
+						{category.subcategories.map((subcategory, index) => (
+							<Link
+								key={`${category.slug}-${index}`}
+								href={`/?category=${
+									category.slug
+								}&subcategory=${encodeURIComponent(subcategory.toLocaleLowerCase().replaceAll(" ", "_"))}`}
+								className={
+									isMobile ? styles.mobileSubNavLink : styles.dropdownLink
+								}
+								onClick={isMobile ? closeMobileMenu : undefined}>
+								{subcategory}
+							</Link>
+						))}
+					</>
+				);
+
+				// Mobile-specific rendering
+				if (isMobile) {
+					return (
+						<div key={category.slug}>
+							{hasSubcategories ? (
+								<Link
+									href={`/?category=${category.slug}`}
+									className={`${styles.mobileNavLink} ${styles.mobileNavButton}`}
+									onClick={() => toggleCategoryExpansion(category.slug)}>
+									<span>{category.title}</span>
+									<span
+										className={`${styles.expandArrow} ${
+											isExpanded ? styles.expanded : ""
+										}`}>
+										▼
+									</span>
+								</Link>
+							) : (
+								<Link
+									href={`/?category=${category.slug}`}
+									className={styles.mobileNavLink}
+									onClick={closeMobileMenu}>
+									{category.title}
+								</Link>
+							)}
+							{hasSubcategories && isExpanded && (
+								<div
+									className={`${styles.mobileSubcategories} ${styles.expanded}`}>
+									<SubcategoryLinks />
+								</div>
+							)}
+						</div>
+					);
+				}
+
+				// Desktop-specific rendering
+				return (
+					<div key={category.slug} className={styles.navDropdown}>
+						<Link
+							href={`/?category=${category.slug}`}
+							className={`${styles.navLink} ${
+								hasSubcategories ? styles.hasDropdown : ""
+							}`}>
+							{category.title}
+							{hasSubcategories && (
+								<span className={styles.dropdownArrow}>▼</span>
+							)}
+						</Link>
+						{hasSubcategories && (
+							<div className={styles.dropdownMenu}>
+								<SubcategoryLinks />
+							</div>
+						)}
+					</div>
+				);
+			})}
+		</>
+	);
 
 	return (
 		<header className={`${styles.header} ${isScrolled ? styles.scrolled : ""}`}>
@@ -110,29 +226,21 @@ export default function Header({
 						alt={logo?.title || "Fire Houze"}
 						width={150}
 						height={100}
+						priority
 					/>
 				</Link>
 
 				{/* Desktop Navigation */}
 				<nav className={styles.nav}>
-					<Link href="/" className={styles.navLink}>
-						All Products
-					</Link>
-					{categories?.map((category) => (
-						<Link
-							key={category.slug}
-							href={`/?category=${category.slug}`}
-							className={styles.navLink}>
-							{category.title}
-						</Link>
-					))}
+					<NavigationItems />
 				</nav>
 
 				{/* Mobile Menu Button */}
 				<button
 					className={styles.mobileMenuButton}
 					onClick={toggleMobileMenu}
-					aria-label="Toggle mobile menu">
+					aria-label="Toggle mobile menu"
+					aria-expanded={isMobileMenuOpen}>
 					<span
 						className={`${styles.hamburger} ${
 							isMobileMenuOpen ? styles.active : ""
@@ -150,21 +258,7 @@ export default function Header({
 					isMobileMenuOpen ? styles.active : ""
 				}`}>
 				<nav className={styles.mobileNav}>
-					<Link
-						href="/"
-						className={styles.mobileNavLink}
-						onClick={() => setIsMobileMenuOpen(false)}>
-						All Products
-					</Link>
-					{categories?.map((category) => (
-						<Link
-							key={category.slug}
-							href={`/?category=${category.slug}`}
-							className={styles.mobileNavLink}
-							onClick={() => setIsMobileMenuOpen(false)}>
-							{category.title}
-						</Link>
-					))}
+					<NavigationItems isMobile />
 				</nav>
 			</div>
 		</header>

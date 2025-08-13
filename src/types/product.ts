@@ -59,6 +59,7 @@ export interface Product {
   };
   strain?: string | null;
   category: string;
+  flowerType: string | null;
   size: {
     value: number;
     unit: 'grams' | 'count';

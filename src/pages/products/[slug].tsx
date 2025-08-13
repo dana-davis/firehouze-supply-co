@@ -85,6 +85,14 @@ export default function ProductPage({ product }: ProductPageProps) {
 					content={`${product.title} - $${product.price}`}
 				/>
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<link rel="icon" href="/favicon.ico" />
+				<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+				<meta name="og:image" content="/og-image.png" />
+				<meta name="og:title" content="Firehouze Supply Co" />
+				<meta
+					name="og:description"
+					content="Your one-stop shop for all things fire."
+				/>
 			</Head>
 
 			<div className={styles.container}>
@@ -163,7 +171,12 @@ export default function ProductPage({ product }: ProductPageProps) {
 
 					<div className={styles.detailsSection}>
 						{product.category && (
-							<div className={styles.category}>{product.category}</div>
+							<div className={styles.category}>{product.category}
+              <span className={styles.separator}> | </span>
+              {product.flowerType && (
+                <span className={styles.flowerType}>{product.flowerType.replaceAll("_", " ")}</span>
+              )}
+            </div>
 						)}
 
 						<h1 className={styles.productTitle}>
